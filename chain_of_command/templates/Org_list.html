@@ -1,0 +1,18 @@
+<html>
+<title>
+    Organization List
+</title>
+
+<body>
+hi
+<div/>
+
+{% if latest_org_list %}
+    <ul>
+        {% for org in latest_org_list %}
+            <li><a href="/org/{{ org.id }}/">{{ org.Name }}</a></li>
+        {% endfor %}
+    </ul>
+{% endif %}
+</body>
+</html>
