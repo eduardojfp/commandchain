@@ -59,12 +59,8 @@ WSGI_APPLICATION = 'chaincommand.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME':'awhite',#temporary, I promise
-        'USER':'root',
-        'PASSWORD':'auggie',
-        'HOST':'127.0.0.1',
-        'PORT':'3306'
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME':'webdb',#temporary, I promise
     }
 }
 
