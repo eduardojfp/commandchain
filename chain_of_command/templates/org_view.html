@@ -1,0 +1,52 @@
+<html>
+<head>
+    <title>
+        {{ Org.Name }}
+    </title>
+    <style>
+        table, th, td {
+            border: 15px solid black;
+        }
+        .c1 {
+            background-color:lightgrey;
+        }
+        .c2{
+            background-color:lightcoral;
+        }
+        .c3{
+            background-color: #C79DD7;
+        }
+    </style>
+</head>
+<body>
+<h1>
+    {{ Org.Name }}
+</h1>
+{{ Org.Description }}
+
+{% if mem %}
+    <h2>Members</h2>
+    <table border="1">
+        <tr>
+            <th>Member's Name</th>
+            <th>Positions</th>
+        </tr>
+        {% for i in mem %}
+            {% cycle 'c1' 'c2' 'c3' as bc silent %}
+            <tr class="{{ bc }}">
+                <td>{{ i.Name }}</td>
+                <td>
+                    {% for q in i.position_set.all %}
+                        {{ q.Name }},
+                        {% empty %}
+                        N/A
+                    {% endfor %}
+
+
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+</body>
+</html>
