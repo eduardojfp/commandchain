@@ -1,15 +1,7 @@
 from django.db import models
-
+from django.conf import settings
 # Create your models here.
-
-class User(models.Model):
-    Username = models.CharField(max_length=45)
-    Password = models.CharField(max_length=45)
-    Email = models.CharField(max_length=200)
-    def __str__(self):
-        return self.Username
-
-
+AUTH_USER_MODEL=getattr(settings,'AUTH_USER_MODEL','auth.User')
 class Organization(models.Model):
     Name = models.CharField(max_length=80)
     Description = models.TextField()
@@ -19,12 +11,13 @@ class Organization(models.Model):
 class Member(models.Model):
     Name = models.CharField(max_length=80)
     Organization = models.ForeignKey(Organization)
-    User = models.ForeignKey(User)
+    User = models.ForeignKey(AUTH_USER_MODEL)
     def __str__(self):
         return self.Name
 
 class Position(models.Model):
     Name = models.CharField(max_length=80)
+    Organization=models.ForeignKey(Organization)
     CanGrantMembership = models.BooleanField(default=False)
     CanIssueOrders = models.BooleanField(default=False)
     CanEditOrganization = models.BooleanField(default=False)
@@ -40,10 +33,11 @@ class Hierarchy(models.Model):
 
 
 class Message(models.Model):
-    Receiver = models.ForeignKey(User)
+    Receiver = models.ForeignKey(AUTH_USER_MODEL)
     Issuer = models.ForeignKey(Member)
     Content = models.TextField()
     TS=models.TimeField(default='CURRENT_TIMESTAMP')
+    IsRead=models.BooleanField(default=False)
 
 
 class Post(models.Model):
