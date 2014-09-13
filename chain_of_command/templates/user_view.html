@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}
+    User Control Panel For {{ user.username }}
+{% endblock %}
+{% block content %}
+    <h1>
+        Control Panel
+    </h1>
+    {% if assoc_members|length > 0 %}
+        <h2>Organizations you are a part of</h2>
+    {% endif %}
+    <ul>
+        {% for i in assoc_members %}
+            <li>
+                {{ i.Name }} -- <a
+                    href="/org/{{ i.Organization_id }}/">{{ i.Organization.Name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,53 +1,51 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title>{{ Organization_name }} Positions</title>
-</head>
-<body>
-<table>
-    <tr>
-        <th>Position Name</th>
-        <th>Can grant membership</th>
-        <th>can issue orders</th>
-        <th>can edit organization</th>
-        <th>can edit privileges</th>
-        <th>Active members fulfilling</th>
-    </tr>
-    {% for i in positions %}
+{% extends "base.html" %}
+<meta charset="UTF-8">
+{% block title %}
+    {{ Organization_name }} Positions
+{% endblock %}
+{% block content %}
+    <table>
         <tr>
-            <td>{{ i.Name }}</td>
-            <td>{% if i.CanGrantMembership %}
-                yes
-            {% else %}
-                No
-            {% endif %}
-            </td>
-            <td>
-                {% if i.CanIssueOrders %}
+            <th>Position Name</th>
+            <th>Can grant membership</th>
+            <th>can issue orders</th>
+            <th>can edit organization</th>
+            <th>can edit privileges</th>
+            <th>Active members fulfilling</th>
+        </tr>
+        {% for i in positions %}
+            <tr>
+                <td>{{ i.Name }}</td>
+                <td>{% if i.CanGrantMembership %}
                     yes
                 {% else %}
                     No
                 {% endif %}
-            </td>
-            <td>
-                {% if i.CanEditOrganization %}
+                </td>
+                <td>
+                    {% if i.CanIssueOrders %}
+                        yes
+                    {% else %}
+                        No
+                    {% endif %}
+                </td>
+                <td>
+                    {% if i.CanEditOrganization %}
+                        Yes
+                    {% else %}
+                        No
+                    {% endif %}
+                </td>
+                <td>{% if i.canEditPrivileges %}
                     Yes
                 {% else %}
                     No
                 {% endif %}
-            </td>
-            <td>{% if i.canEditPrivileges %}
-                Yes
-            {% else %}
-                No
-            {% endif %}
-            </td>
-        <td>
+                </td>
+                <td>
 
-        </td>
-        </tr>
-    {% endfor %}
-</table>
-</body>
-</html>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

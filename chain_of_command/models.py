@@ -51,6 +51,8 @@ class Post(models.Model):
 
 
 class Order(models.Model):
+    import datetime
     Issuer = models.ForeignKey(Member)
     Post = models.ForeignKey(Post)
+    Deadline = models.DateTimeField(auto_now=True, null=True)
 

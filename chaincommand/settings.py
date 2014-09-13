@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -59,8 +60,10 @@ WSGI_APPLICATION = 'chaincommand.wsgi.application'
 
 DATABASES = {
     'default': {
+        # This should be migrated to postgresql at some point,assuming this
+        # code ever reaches a production ready status
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME':'webdb',#temporary, I promise
+        'NAME': 'webdb',  # temporary, I promise
     }
 }
 

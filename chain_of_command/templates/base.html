@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <style>
+        #sidebar {
+            position: absolute;
+            left: 0px;
+            bottom: 0px;
+            top: 0px;
+            width: 250px;
+            background-color: #0ad6e5;
+        }
+
+        #content {
+            border: 1px;
+            left: 250px;
+            position: absolute;
+        }
+    </style>
+    <title>{% block title %} my amazing site{% endblock %}</title>
+    {% block style %}
+    {% endblock %}
+</head>
+<body>
+<div>
+    <div id="sidebar">
+        {% block sidebar %}
+            Welcome {% if loginable %}
+            <a href="/user/">{{ user.username }}</a>
+        {% else %}
+            <form action="/login/" method="POST">
+                {% csrf_token %}
+                <label for="username">username</label>
+                <input type="text" id="username" name="username">
+                <label for="password">password</label>
+                <input type="password" id="password" name="password">
+                <input type="submit">
+            </form>
+        {% endif %}
+            <ul>
+                <li>
+                    <a href="/list_org/">
+                        list of organizations
+                    </a>
+                </li>
+                <li>
+                    <a href="/membership/">
+                        Your organizations
+                    </a>
+                </li>
+                {% if loginable %}
+                    <li>
+                        <a href="/logout/">logout</a>
+                    </li>
+                {% endif %}
+            </ul>
+        {% endblock %}
+    </div>
+    <div id="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+</div>
+</body>
+</html>
