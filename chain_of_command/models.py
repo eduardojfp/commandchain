@@ -3,7 +3,7 @@ from django.conf import settings
 # Create your models here.
 AUTH_USER_MODEL=getattr(settings,'AUTH_USER_MODEL','auth.User')
 class Organization(models.Model):
-    Name = models.CharField(max_length=80)
+    Name = models.CharField(max_length=80, unique=True)
     Description = models.TextField()
     def __str__(self):
         return self.Name
