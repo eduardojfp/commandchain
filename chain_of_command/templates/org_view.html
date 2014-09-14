@@ -25,8 +25,9 @@
     <h1>
         {{ Org.Name }}
     </h1>
-    {{ Org.Description }}
-
+    {% autoescape off %}
+        {{ Org.Description }}
+    {% endautoescape %}
     {% if mem %}
         <h2>Members</h2>
         <table border="1">

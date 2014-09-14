@@ -17,5 +17,8 @@ urlpatterns = patterns('',
                        url(r'^user/$', views.user_page,
                            name="User_page"),
                        url(r'^logout/$', views.logout_page, name="logout page"),
-                       url(r'^login/$', views.login, name="login")
+                       url(r'^login/$', views.login,
+                           name="login"),
+                       url(r'^org/create/$', views.create_organization,
+                           name='create org')
 )
