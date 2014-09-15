@@ -38,7 +38,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'chain_of_command',
+    'ckeditor'
 )
+CKEDITOR_UPLOAD_PATH = 'content/ckeditor'
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -81,8 +83,14 @@ USE_L10N = True
 USE_TZ = True
 
 LOGIN_URL = '/login/'
-
+MEDIA_ROOT = '/home/awhite/PycharmProjects/untitled/media/'
+MEDIA_URL = '/media/'
+CKEDITOR_JQUERY_URL = '//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery' \
+                      '.min.js'
+CKEDITOR_IMAGE_BACKEND = 'pillow'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = '/home/awhite/PycharmProjects/untitled/static/'

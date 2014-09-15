@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block Title %}
+    Error: {{ error_summary }}
+{% endblock %}
+{% block content %}
+    <font color="red">
+        {{ error_details }}
+    </font>
+{% endblock %}

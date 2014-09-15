@@ -15,6 +15,15 @@
             <li>
                 {{ i.Name }} -- <a
                     href="/org/{{ i.Organization_id }}/">{{ i.Organization.Name }}</a>
+                These are posts you have created as this member.
+                <ul>
+                    {% for j in i.post_set.all %}
+                        <li>
+                            <a href="/post/{{ j.id }}/view">{{ j.Title }}</a>,
+                            or <a href="/post/{{ j.id }}/edit">edit</a>
+                        </li>
+                    {% endfor %}
+                </ul>
             </li>
         {% endfor %}
     </ul>

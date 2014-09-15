@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block Title %}
+    Make an order
+{% endblock %}
+{% block content %}
+    <form action="org/{{ OID }}/{{ PID }}/create" method="post">
+    {{form }}
+    </form>
+{% endblock %}

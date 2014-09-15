@@ -1,18 +1,14 @@
-<html>
-<title>
+{% extends 'base.html' %}
+{% block Title %}
     Organization List
-</title>
-
-<body>
-hi
-
-
-{% if latest_org_list %}
-    <ul>
-        {% for org in latest_org_list %}
-            <li><a href="/org/{{ org.id }}/">{{ org.Name }}</a></li>
-        {% endfor %}
-    </ul>
-{% endif %}
-</body>
-</html>
+{% endblock %}
+{% block content %}
+    hi
+    {% if latest_org_list %}
+        <ul>
+            {% for org in latest_org_list %}
+                <li><a href="/org/{{ org.id }}/">{{ org.Name }}</a></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

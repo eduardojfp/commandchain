@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block Title %}
+    {{ title }}
+{% endblock %}
+{% block content %}
+    <h1>
+        {{ title }}
+    </h1>
+    {% autoescape off %}
+        {{ Content }}
+    {% endautoescape %}
+{% endblock %}
