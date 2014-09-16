@@ -4,9 +4,9 @@
 {% endblock %}
 {% block content %}
     hi
-    {% if latest_org_list %}
+    {% if orgs %}
         <ul>
-            {% for org in latest_org_list %}
+            {% for org in orgs %}
                 <li><a href="/org/{{ org.id }}/">{{ org.Name }}</a></li>
             {% endfor %}
         </ul>

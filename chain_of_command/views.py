@@ -13,8 +13,8 @@ def Organization_List(request):
     else:
         lgnabl = None
     latest_org_list = models.Organization.objects.all()
-    context = {'latest_org_list': latest_org_list,
-               "loginable": lgnabl}
+    context = {"user": U,
+               "loginable": lgnabl, "orgs": latest_org_list}
     return render(request, 'Org_list.html', context)
     # Create your views here.
 
@@ -120,23 +120,106 @@ def create_organization(request):
     from django.shortcuts import redirect
 
     if request.method == "GET":
-        return render(request, "create_organization.html",
+        return render(request, "generic_form.html",
                       {"user": request.user,
-                       "loginable": request.user.is_authenticated()})
+                       "loginable": request.user.is_authenticated(),
+                       'form': forms.OrganizationForm(),
+                       'form_action': '/org/create/',
+                       'form_method': 'POST'})
     else:
-        descr = request.POST['organization_description']
-        oname = request.POST['organization_name']
-        mname = request.POST['member_name']
-        org = models.Organization(Name=oname, Description=descr)
-        org.save()
-        pos = models.Position(Name="admin", Organization_id=org.id,
-                              CanGrantMembership=True, CanIssueOrders=True,
-                              CanEditOrganization=True,
-                              CanEditPrivileges=True)
-        pos.save()
-        mem = models.Member(Name=mname, Organization_id=org.id,
-                            User_id=request.user.id)
-        mem.save()
-        pos.associated.add(mem)
-        pos.save()
-        return redirect('/org/%d/' % org.id)
+        g = forms.OrganizationForm(request.POST)
+        print(dir(g))
+        if g.is_valid():
+            descr = g.cleaned_data['Description']
+            oname = g.cleaned_data['Name']
+            mname = g.cleaned_data['MemberName']
+            org = models.Organization(Name=oname, Description=descr)
+            org.save()
+            pos = models.Position(Name="admin", Organization_id=org.id,
+                                  CanGrantMembership=True, CanIssueOrders=True,
+                                  CanEditOrganization=True,
+                                  CanEditPrivileges=True)
+            pos.save()
+            mem = models.Member(Name=mname, Organization_id=org.id,
+                                User_id=request.user.id)
+            mem.save()
+            pos.associated.add(mem)
+            pos.save()
+            return redirect('/org/%d/' % org.id)
+
+
+@login_required
+def create_post(request, member_id):
+    from datetime import datetime
+    from django.shortcuts import redirect
+
+    print(dir(request.user))
+    if request.user.member_set.get(pk=member_id) is not None:
+        if request.method == 'POST':
+            c = forms.PostForm(request.POST)
+            if c.is_valid():
+                title = c.cleaned_data['Title']
+                creator = models.Member.objects.get(pk=member_id)
+                content = c.cleaned_data['Content']
+                timestamp = datetime.now()
+                visible = c.cleaned_data['Visible']
+                q = models.Post(Title=title, Creator=creator, Content=content,
+                                timestamp=timestamp, Visible=visible)
+                q.save()
+                return redirect('/post/%s/view/' % str(q.id))
+        else:
+            return render(request, "generic_form.html",
+                          {'form': forms.PostForm, 'Form_Title': "create post",
+                           "form_action": "/post/%s/create" % str(member_id),
+                           "form_method": 'POST',
+                           'user': request.user,
+                           'loginable': request.user.is_authenticated()})
+    else:
+        return render(request, 'Error.html',
+                      {'error_summary': 'cannae post there',
+                       'error_details': 'You may not post as a member whose '
+                                        'life you cannot control',
+                       'user': request.user,
+                       'loginable': request.user.is_authenticated()})
+
+
+def view_post(request, post_id):
+    p = models.Post.objects.get(pk=post_id)
+    if not p.Visible:
+        if request.user.is_authenticated():
+            return render(request, 'view_post.html',
+                          {'title': p.Title, 'Content': p.Content})
+        else:
+            return render(request, 'Error.html',
+                          {'error_summary': 'NOt visible',
+                           'error_details': 'You must have permission to view '
+                                            'this post'})
+    else:
+        return render(request, 'view_post.html',
+                      {'title': p.Title, 'Content': p.Content,
+                       'user': request.user,
+                       'loginable': request.user.is_authenticated()})
+
+
+@login_required()
+def edit_post(request, post_id):
+    from datetime import datetime
+    from django.shortcuts import redirect
+
+    i = models.Post.objects.get(pk=post_id)
+    m = request.user.member_set.get(pk=i.Creator_id)
+    if m is not None:
+        if request.method == 'GET':
+            return render(request, "generic_form.html",
+                          {'form': forms.PostForm(instance=i),
+                           'Form_Title': "create post",
+                           "form_action": "/post/%s/edit" % str(post_id),
+                           "form_method": 'POST',
+                           'user': request.user,
+                           'loginable': request.user.is_authenticated()})
+        else:
+            c = forms.PostForm(request.POST)
+            if c.is_valid():
+                i.Content = c.cleaned_data['Content']
+                i.save()
+            return redirect('/post/%s/view' % str(i.id))

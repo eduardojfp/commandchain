@@ -16,6 +16,7 @@
                 {{ i.Name }} -- <a
                     href="/org/{{ i.Organization_id }}/">{{ i.Organization.Name }}</a>
                 These are posts you have created as this member.
+                <a href="/post/{{ i.id }}/create">Create a new Post</a>
                 <ul>
                     {% for j in i.post_set.all %}
                         <li>
