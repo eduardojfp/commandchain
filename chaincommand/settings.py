@@ -83,7 +83,7 @@ USE_L10N = True
 USE_TZ = True
 
 LOGIN_URL = '/login/'
-MEDIA_ROOT = '/home/awhite/PycharmProjects/untitled/media/'
+MEDIA_ROOT = os.getcwd()+'media/'
 MEDIA_URL = '/media/'
 CKEDITOR_JQUERY_URL = '//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery' \
                       '.min.js'
@@ -93,4 +93,4 @@ CKEDITOR_IMAGE_BACKEND = 'pillow'
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = '/home/awhite/PycharmProjects/untitled/static/'
+STATIC_ROOT = os.getcwd()+'/static/'
