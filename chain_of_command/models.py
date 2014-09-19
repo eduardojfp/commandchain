@@ -47,7 +47,7 @@ class Message(models.Model):
     Receiver = models.ForeignKey(AUTH_USER_MODEL)
     Issuer = models.ForeignKey(Member)
     Content = models.TextField()
-    TS = models.TimeField(default='CURRENT_TIMESTAMP')
+    TS = models.TimeField(auto_now_add=True)
     IsRead = models.BooleanField(default=False)
 
 
@@ -57,6 +57,10 @@ class Post(models.Model):
     timestamp = models.TimeField(auto_now=True)
     Content = RichTextField()
     Visible = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['timestamp']
+
 
     def __str__(self):
         return self.Title
@@ -68,5 +72,5 @@ class Order(models.Model):
     Issuer = models.ForeignKey(Member)
     P = models.ForeignKey(Position, default=0)
     Post = models.ForeignKey(Post)
-    Deadline = models.DateTimeField(auto_now=True, null=True)
+    Deadline = models.DateTimeField(auto_now_add=True, null=True)
 
