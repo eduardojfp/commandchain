@@ -53,6 +53,8 @@
     {% block style %}
     {% endblock %}
     {{ form.media }}
+    {% block script %}
+    {% endblock %}
 </head>
 <body>
 <div>
@@ -72,8 +74,8 @@
         {% endif %}
             <ul>
                 <li class="sidebar-item">
-                <a href="/list_org/">
-                        list of organizations
+                    <a href="/list_org/">
+                    list of organizations
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -83,10 +85,10 @@
                 </li>
                 {% if loginable %}
                     <li class="sidebar-item">
-                    <a href="/org/create/">Create an organization</a>
+                        <a href="/org/create/">Create an organization</a>
                     </li>
                     <li class="sidebar-item">
-                    <a href="/logout/">logout</a>
+                        <a href="/logout/">logout</a>
                     </li>
                 {% endif %}
             </ul>
