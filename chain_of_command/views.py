@@ -23,11 +23,18 @@ def OrganizationView(request, org_id):
     U = request.user
     UID = U.id
     canseeProvisional = False
+    canDelete = False
     if U.is_authenticated():
         lgnabl = True
         mship = models.Member.objects.filter(User_id=U.id,
                                              Organization_id=org_id)
         canseeProvisional = len(mship) > 0
+        for i in mship:
+            for q in i.position_set.all():
+                print(q.Name)
+                print(q.Organization_id)
+                if q.Name == 'admin':
+                    canDelete = True
     else:
         lgnabl = None
     try:
@@ -39,7 +46,8 @@ def OrganizationView(request, org_id):
         raise Http404
     return render(request, 'org_view.html',
                   {'Org': org, 'mem': mem,
-                   "loginable": lgnabl, 'canseeprovisional': canseeProvisional})
+                   "loginable": lgnabl, 'canseeprovisional': canseeProvisional,
+                   'candelete': canDelete})
 
 
 def registration_form(request):
@@ -279,3 +287,31 @@ def apply_to_org(request):
             nm.Provisional = True
             nm.save()
             return redirect("/user")
+
+
+@login_required()
+def delete_org(request, org_id):
+    from django.shortcuts import redirect
+
+    U = request.user
+    canDelete = False
+    if U.is_authenticated():
+        mship = models.Member.objects.filter(User_id=U.id,
+                                             Organization_id=org_id)
+        for i in mship:
+            for q in i.position_set.all():
+                print(q.Name)
+                print(q.Organization_id)
+                if q.Name == 'admin':
+                    canDelete = True
+    if canDelete:
+        models.Organization.objects.get(pk=org_id).delete()
+        return redirect('/list_org')
+    else:
+        return render(request, 'Error.html', {'error_summary': 'Invalid access',
+                                              'error_details': 'You must be '
+                                                               'the '
+                                                               'administrator '
+                                                               'of the '
+                                                               'organization '
+                                                               'to delete it'})

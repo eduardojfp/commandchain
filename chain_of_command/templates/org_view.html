@@ -26,7 +26,13 @@
         {{ Org.Name }}
     </h1>
     {% if loginable %}
-        <a href="/org/apply?org_id={{ Org.id }}">apply</a>
+        {% if not canseeprovisional %}
+            <a href="/org/apply?org_id={{ Org.id }}">apply</a>
+        {% else %}
+            {% if candelete %}
+                <a href="/org/{{ Org.id }}/delete">Delete</a>
+            {% endif %}
+        {% endif %}
     {% endif %}
     {% autoescape off %}
         {{ Org.Description }}
@@ -45,7 +51,7 @@
                         <tr class="{{ bc }}">
                             <td>{{ i.Name }}</td>
                             <td>
-                              Provisional
+                                Provisional
 
                             </td>
                         </tr>
@@ -55,12 +61,13 @@
                     <tr class="{{ bc }}">
                         <td>{{ i.Name }}</td>
                         <td>
-
-                            {% for q in i.position_set.all %}
-                                {{ q.Name }},
-                            {% empty %}
-                                I guess nobody works on this...
-                            {% endfor %}
+                            <ul>
+                                {% for q in i.position_set.all %}
+                                    <li>{{ q.Name }}</li>
+                                {% empty %}
+                                    I guess nobody works on this...
+                                {% endfor %}
+                            </ul>
 
 
                         </td>

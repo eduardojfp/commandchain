@@ -73,4 +73,3 @@ class Order(models.Model):
     P = models.ForeignKey(Position, default=0)
     Post = models.ForeignKey(Post)
     Deadline = models.DateTimeField(auto_now_add=True, null=True)
-
