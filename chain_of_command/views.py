@@ -37,13 +37,30 @@ def OrganizationView(request, org_id):
                    "loginable": lgnabl})
 
 
+def registration_form(request):
+    """Renders a registration page that allows a user to register,
+    or something"""
+    from django.contrib.auth.forms import UserCreationForm
+    from django.http import HttpResponseRedirect
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            new_user = form.save()
+            return HttpResponseRedirect("/user")
+    else:
+        u = UserCreationForm()
+        return render(request, 'generic_form.html',
+                      {"form": u, "form_action": "/register",
+                       "form_method": "POST"})
+
+
 @login_required
 def position_display(request, org_id):
     """
     Displays the positions in an organization, assuming that the logged in
     user is a member of said organization
     """
-    print("hi there")
     U = request.user
     UID = U.id
     mem = models.Member.objects.filter(User_id=UID, Organization_id=org_id)
@@ -66,7 +83,6 @@ def user_page(request):
     U = request.user
     UID = U.id
     assoc_members = U.member_set.all()
-    print(dir(assoc_members[0]))
     if U.is_authenticated():
         lgnabl = True
     else:
@@ -101,7 +117,10 @@ def login(request):
         p = request.POST["password"]
         # Don't need to check if this exists because the form should have
         # been filled with a default redirection leading to the user.
-        l = request.POST['next']
+        if 'next' in request.POST :
+            l = request.POST['next']
+        else:
+            l = '/user'
         user = authenticate(username=u, password=p)
         if user is not None:
             if user.is_active:
@@ -128,7 +147,6 @@ def create_organization(request):
                        'form_method': 'POST'})
     else:
         g = forms.OrganizationForm(request.POST)
-        print(dir(g))
         if g.is_valid():
             descr = g.cleaned_data['Description']
             oname = g.cleaned_data['Name']

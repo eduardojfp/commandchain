@@ -15,7 +15,7 @@ urlpatterns = patterns('',
                        # url(r'^org/(?P<org_id>\d+)/$', views.OrganizationView,
                        # name='Org_detail'),
                        # url(r'^org/(?P<org_id>\d+)/positions',
-                       #     views.position_display, name='position_display'),
+                       # views.position_display, name='position_display'),
                        url(r'^user/$', views.user_page,
                            name="User_page"),
                        url(r'^logout/$', views.logout_page, name="logout page"),
@@ -31,6 +31,7 @@ urlpatterns = patterns('',
                        (r'^ckeditor/', include('ckeditor.urls')),
                        url(r'^post/(?P<post_id>\d+)/edit$', views.edit_post,
                            name='edit post'),
-                       url(r'^org/', include(hello.org_patterns))
+                       url(r'^org/', include(hello.org_patterns)),
+                       url(r'^register', views.registration_form)
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(
     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
