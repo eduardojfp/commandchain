@@ -19,6 +19,12 @@ class PostForm(forms.ModelForm):
         exclude = ['id', 'Creator', 'timestamp']
 
 
+class PositionForm(forms.ModelForm):
+    class Meta:
+        models = models.Position
+        exclude = ['id']
+
+
 class OrganizationForm(forms.ModelForm):
     Description = forms.CharField(widget=CKEditorWidget())
     MemberName = forms.CharField(max_length=80)
