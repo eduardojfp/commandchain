@@ -17,7 +17,7 @@ class Member(models.Model):
     Name = models.CharField(max_length=80)
     Organization = models.ForeignKey(Organization)
     User = models.ForeignKey(AUTH_USER_MODEL)
-
+    Provisional=models.BooleanField(default=False)
     def __str__(self):
         return self.Name
 

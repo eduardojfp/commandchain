@@ -36,20 +36,57 @@
                 <th>Positions</th>
             </tr>
             {% for i in mem %}
-                {% cycle 'c1' 'c2' 'c3' as bc silent %}
-                <tr class="{{ bc }}">
-                    <td>{{ i.Name }}</td>
-                    <td>
-                        {% for q in i.position_set.all %}
-                            {{ q.Name }},
-                        {% empty %}
-                            N/A
-                        {% endfor %}
+                {% if i.Provisional %}
+                    {% if canseeprovisional %}
+                        {% cycle 'c1' 'c2' 'c3' as bc silent %}
+                        <tr class="{{ bc }}">
+                            <td>{{ i.Name }}</td>
+                            <td>
+                                {% for q in i.position_set.all %}
+                                    {{ q.Name }},
+                                {% empty %}
+                                    I guess nobody works on this...
+                                {% endfor %}
 
 
-                    </td>
-                </tr>
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% else %}
+                    {% cycle 'c1' 'c2' 'c3' as bc silent %}
+                    <tr class="{{ bc }}">
+                        <td>{{ i.Name }}</td>
+                        <td>
+                            {% for q in i.position_set.all %}
+                                {{ q.Name }},
+                            {% empty %}
+                                I guess nobody works on this...
+                            {% endfor %}
+
+
+                        </td>
+                    </tr>
+                {% endif %}
             {% endfor %}
         </table>
+        <h2>Posts</h2>
+        <ul>
+
+            {% for c in mem %}
+                {% for i in c.post_set.all %}
+                    {% if i.Visible %}
+                        <li>
+                            <a href="/post/{{ i.id }}/view">{{ i.Title }}</a>
+                        </li>
+                    {% else %}
+                        {% if canseeprovisional %}
+                            <li>
+                                <a href="/post/{{ i.id }}/view">{{ i.Title }}</a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </ul>
     {% endif %}
 {% endblock %}

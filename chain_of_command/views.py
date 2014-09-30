@@ -22,24 +22,28 @@ def Organization_List(request):
 def OrganizationView(request, org_id):
     U = request.user
     UID = U.id
+    canseeProvisional = False
     if U.is_authenticated():
         lgnabl = True
+        mship = models.Member.objects.filter(User_id=U.id,
+                                             Organization_id=org_id)
+        canseeProvisional = len(mship) > 0
     else:
         lgnabl = None
     try:
         org = models.Organization.objects.get(pk=org_id)
         # print(dir(org.member_set.all()))
         mem = org.member_set.order_by('Name')
+        print(dir(mem[0]))
     except models.Organization.DoesNotExist:
         raise Http404
     return render(request, 'org_view.html',
                   {'Org': org, 'mem': mem,
-                   "loginable": lgnabl})
+                   "loginable": lgnabl, 'canseeprovisional': canseeProvisional})
 
 
 def registration_form(request):
-    """Renders a registration page that allows a user to register,
-    or something"""
+    """Renders a registration page that allows a user to register"""
     from django.contrib.auth.forms import UserCreationForm
     from django.http import HttpResponseRedirect
 
@@ -82,7 +86,10 @@ def position_display(request, org_id):
 def user_page(request):
     U = request.user
     UID = U.id
-    assoc_members = U.member_set.all()
+    if hasattr(U, 'member_set'):
+        assoc_members = U.member_set.all()
+    else:
+        assoc_members = None
     if U.is_authenticated():
         lgnabl = True
     else:
@@ -117,7 +124,7 @@ def login(request):
         p = request.POST["password"]
         # Don't need to check if this exists because the form should have
         # been filled with a default redirection leading to the user.
-        if 'next' in request.POST :
+        if 'next' in request.POST:
             l = request.POST['next']
         else:
             l = '/user'
@@ -171,7 +178,6 @@ def create_post(request, member_id):
     from datetime import datetime
     from django.shortcuts import redirect
 
-    print(dir(request.user))
     if request.user.member_set.get(pk=member_id) is not None:
         if request.method == 'POST':
             c = forms.PostForm(request.POST)
@@ -184,7 +190,7 @@ def create_post(request, member_id):
                 q = models.Post(Title=title, Creator=creator, Content=content,
                                 timestamp=timestamp, Visible=visible)
                 q.save()
-                return redirect('/post/%s/view/' % str(q.id))
+                return redirect('/post/%s/view' % str(q.id))
         else:
             return render(request, "generic_form.html",
                           {'form': forms.PostForm, 'Form_Title': "create post",
@@ -202,11 +208,20 @@ def create_post(request, member_id):
 
 
 def view_post(request, post_id):
+    def canViewPost(user, pid):
+        p = models.Post.objects.get(pk=pid)
+        for x in user.member_set.all():
+            if x.Organization_id == p.Creator.Organization_id:
+                return True
+        return False
+
     p = models.Post.objects.get(pk=post_id)
     if not p.Visible:
-        if request.user.is_authenticated():
+        if canViewPost(request.user, post_id):
             return render(request, 'view_post.html',
-                          {'title': p.Title, 'Content': p.Content})
+                          {'title': p.Title, 'Content': p.Content,
+                           'user': request.user,
+                           'loginable': request.user.is_authenticated()})
         else:
             return render(request, 'Error.html',
                           {'error_summary': 'NOt visible',
