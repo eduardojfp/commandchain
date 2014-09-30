@@ -256,3 +256,26 @@ def edit_post(request, post_id):
                 i.Content = c.cleaned_data['Content']
                 i.save()
             return redirect('/post/%s/view' % str(i.id))
+
+
+@login_required()
+def apply_to_org(request):
+    from django.shortcuts import redirect
+
+    if request.method == "GET":
+        org_id = request.GET['org_id']
+        form = forms.Org_applicationForm()
+        return render(request, 'generic_form.html',
+                      {'form': form, 'Form_Title': 'Applying to org',
+                       'form_action': '/org/apply/', 'form_method': 'POST',
+                       'user': request.user,
+                       'loginable': request.user.is_authenticated()})
+    else:
+        form = forms.Org_applicationForm(request.POST)
+        if form.is_valid():
+            nm = models.Member(Organization=form.cleaned_data["Organization"])
+            nm.Name = form.cleaned_data['member_name']
+            nm.User_id = request.user.id
+            nm.Provisional = True
+            nm.save()
+            return redirect("/user")

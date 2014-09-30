@@ -25,6 +25,9 @@
     <h1>
         {{ Org.Name }}
     </h1>
+    {% if loginable %}
+        <a href="/org/apply?org_id={{ Org.id }}">apply</a>
+    {% endif %}
     {% autoescape off %}
         {{ Org.Description }}
     {% endautoescape %}
@@ -42,12 +45,7 @@
                         <tr class="{{ bc }}">
                             <td>{{ i.Name }}</td>
                             <td>
-                                {% for q in i.position_set.all %}
-                                    {{ q.Name }},
-                                {% empty %}
-                                    I guess nobody works on this...
-                                {% endfor %}
-
+                              Provisional
 
                             </td>
                         </tr>
@@ -57,6 +55,7 @@
                     <tr class="{{ bc }}">
                         <td>{{ i.Name }}</td>
                         <td>
+
                             {% for q in i.position_set.all %}
                                 {{ q.Name }},
                             {% empty %}

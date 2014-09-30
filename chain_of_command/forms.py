@@ -32,3 +32,11 @@ class OrganizationForm(forms.ModelForm):
     class Meta:
         model = models.Organization
         exclude = ['id']
+
+
+class Org_applicationForm(forms.ModelForm):
+    member_name = forms.CharField(80)
+
+    class Meta:
+        model = models.Member
+        exclude = ['id', 'User', 'Provisional', 'Name']
