@@ -76,6 +76,11 @@ def position_display(request, org_id):
     U = request.user
     UID = U.id
     mem = models.Member.objects.filter(User_id=UID, Organization_id=org_id)
+    Usr = object()
+    for i in mem:
+        for j in i.position_set.all():
+            if j.CanEditPrivileges:
+                Usr = j
     org = models.Organization.objects.get(pk=org_id)
     if U.is_authenticated():
         lgnabl = True
@@ -85,10 +90,76 @@ def position_display(request, org_id):
         showing = models.Position.objects.filter(Organization_id=org_id)
         return render(request, 'position_view.html',
                       {'positions': showing, 'Organization_name': org.Name,
-                       "user": U, "loginable": lgnabl})
+                       "user": U, "loginable": lgnabl, 'usr': Usr})
     else:
         return "<html><head></head><body>Silly person, you can't read " \
                "that.</body></html>"
+
+
+@login_required()
+def edit_position(request, org_id, pos_id):
+    from django.shortcuts import redirect
+
+    form = forms.PositionForm(org_id,
+                              instance=models.Position.objects.get(pk=pos_id))
+    UID = request.user.id
+    mem = models.Member.objects.filter(User_id=UID, Organization_id=org_id)
+    canbehere = False
+    for i in mem:
+        for j in i.position_set.all():
+            if j.CanEditPrivileges:
+                canbehere = True
+                break
+        if canbehere:
+            break
+    if canbehere:
+        if request.method == "GET":
+            print(dir(form))
+            return render(request, 'generic_form.html',
+                          {'form': form, 'Form_Title': "Edit position",
+                           "form_action": "",
+                           "form_method": 'POST',
+                           'user': request.user,
+                           'loginable': request.user.is_authenticated()})
+        else:
+            f = forms.PositionForm(org_id, request.POST,
+                                   instance=models.Position.objects.get(
+                                       pk=pos_id))
+            if f.is_valid():
+                f.save()
+    return redirect('/list_org')
+
+
+@login_required()
+def create_position(request, org_id):
+    from django.shortcuts import redirect
+
+    form = forms.PositionForm(org_id)
+    UID = request.user.id
+    mem = models.Member.objects.filter(User_id=UID, Organization_id=org_id)
+    canbehere = False
+    for i in mem:
+        for j in i.position_set.all():
+            if j.CanEditPrivileges:
+                canbehere = True
+                break
+        if canbehere:
+            break
+    if canbehere:
+        if request.method == "GET":
+            print(dir(form))
+            return render(request, 'generic_form.html',
+                          {'form': form, 'Form_Title': "Create Position",
+                           "form_action": "",
+                           "form_method": 'POST',
+                           'user': request.user,
+                           'loginable': request.user.is_authenticated()})
+        else:
+            f = forms.PositionForm(org_id, request.POST)
+            if f.is_valid():
+                f.save()
+            return redirect('/org/%s/positions' % org_id)
+    return redirect('/list_org')
 
 
 def user_page(request):

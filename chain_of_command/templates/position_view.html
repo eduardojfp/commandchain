@@ -4,7 +4,10 @@
     {{ Organization_name }} Positions
 {% endblock %}
 {% block content %}
-    <table>
+    {% if usr.CanEditPrivileges %}
+        <a href="create">Create Position</a>
+    {% endif %}
+    <table border="1">
         <tr>
             <th>Position Name</th>
             <th>Can grant membership</th>
@@ -15,7 +18,15 @@
         </tr>
         {% for i in positions %}
             <tr>
-                <td>{{ i.Name }}</td>
+                <td>
+                    <!-- Should only show the name of the position if the user has permission to edit-->
+                    {% if usr.CanEditPrivileges %}
+                        <a href="positions/{{ i.id }}/edit">{{ i.Name }}</a>
+                    {% else %}
+
+                        {{ i.Name }}
+                    {% endif %}
+                </td>
                 <td>{% if i.CanGrantMembership %}
                     yes
                 {% else %}
@@ -43,9 +54,29 @@
                 {% endif %}
                 </td>
                 <td>
-
+                    <ul>
+                        {% for j in i.associated.all %}
+                            <li>
+                                {{ j.Name }}
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </td>
             </tr>
         {% endfor %}
     </table>
+    {% if applicants %}
+        <h2>
+            Applicants
+        </h2>
+        <ul>
+            {% for i in applicants %}
+                <li>
+                    <a href="applicant/{{ i.id }}">
+                        {{ i.name }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 {% endblock %}

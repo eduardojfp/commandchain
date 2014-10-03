@@ -8,8 +8,12 @@ from chaincommand import settings
 
 org_patterns = patterns('',
                         url(r'^(?P<org_id>\d+)/$', views.OrganizationView),
-                        url(r'^(?P<org_id>\d+)/positions/',
+                        url(r'^(?P<org_id>\d+)/positions[/]*$',
                             views.position_display),
+                        url(r'^(?P<org_id>\d+)/positions/(?P<pos_id>\d+)/edit',
+                            views.edit_position),
+                        url(r'^(?P<org_id>\d+)/positions/create',
+                            views.create_position),
                         url(r'^(?P<org_id>\d+)/delete', views.delete_org),
                         url(r'^create/', views.create_organization),
                         url(r'^apply/', views.apply_to_org)

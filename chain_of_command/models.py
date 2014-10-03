@@ -17,7 +17,8 @@ class Member(models.Model):
     Name = models.CharField(max_length=80)
     Organization = models.ForeignKey(Organization)
     User = models.ForeignKey(AUTH_USER_MODEL)
-    Provisional=models.BooleanField(default=False)
+    Provisional = models.BooleanField(default=False)
+
     def __str__(self):
         return self.Name
 
@@ -30,13 +31,12 @@ class Position(models.Model):
     CanEditOrganization = models.BooleanField(default=False)
     CanEditPrivileges = models.BooleanField(default=False)
     Percolates = models.BooleanField(default=False)
-    associated = models.ManyToManyField(Member, blank=True, null=True)
+    associated = models.ManyToManyField(Member)
     boss = models.ForeignKey('Position', to_field='id', default=None, null=True,
                              blank=True)
 
     def __str__(self):
         return self.Name
-
 
 class Hierarchy(models.Model):
     issuer = models.ForeignKey(Position, related_name="Fi")

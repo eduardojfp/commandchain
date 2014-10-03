@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}
+    Applicant {{ mem.Name }}
+{% endblock %}
+{% block content %}
+    <form action="applicant" method="POST">
+        <p>Member's name: {{ mem.Name }}</p>
+
+        <p>User's Email:{{ mem.user.email }}</p>
+    <p><label for="yesorno">Accept application?</label></p>
+    </form>
+{% endblock %}
