@@ -14,14 +14,14 @@ def get_viewable_posts(org_id, user_id=None):
     """
     viewable = []
     org = Organization.objects.get(pk=org_id)
-    memberInOrg = False
+    member_in_org = False
     if user_id is not None:
         for j in User.objects.get(pk=user_id):
             for q in j.member_set.all():
-                if q.Organization_id == org_id and q.Provisional == False:
-                    memberInOrg = True
+                if q.Organization_id == org_id and not q.Provisional :
+                    member_in_org = True
     for i in org.member_set.all():
         for post in i.post_set.all():
-            if post.Visible or memberInOrg:
+            if post.Visible or member_in_org:
                 viewable.append(post)
     return viewable

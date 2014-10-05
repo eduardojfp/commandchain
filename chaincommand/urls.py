@@ -11,7 +11,7 @@ urlpatterns = patterns('',
                        # url(r'^blog/', include('blog.urls')),
 
                        url(r'^admin/', include(admin.site.urls)),
-                       url(r'^list_org/', views.Organization_List),
+                       url(r'^list_org/', views.organization_list),
                        # url(r'^org/(?P<org_id>\d+)/$', views.OrganizationView,
                        # name='Org_detail'),
                        # url(r'^org/(?P<org_id>\d+)/positions',

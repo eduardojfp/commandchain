@@ -5,21 +5,21 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext, loader
 
 
-def Organization_List(request):
-    U = request.user
-    UID = U.id
-    if U.is_authenticated():
+def organization_list(request):
+    user = request.user
+    uid = user.id
+    if user.is_authenticated():
         lgnabl = True
     else:
         lgnabl = None
     latest_org_list = models.Organization.objects.all()
-    context = {"user": U,
+    context = {"user": user,
                "loginable": lgnabl, "orgs": latest_org_list}
     return render(request, 'Org_list.html', context)
     # Create your views here.
 
 
-def OrganizationView(request, org_id):
+def organization_view(request, org_id):
     U = request.user
     UID = U.id
     canseeProvisional = False
@@ -343,14 +343,14 @@ def apply_to_org(request):
 
     if request.method == "GET":
         org_id = request.GET['org_id']
-        form = forms.Org_applicationForm()
+        form = forms.OrgApplicationForm()
         return render(request, 'generic_form.html',
                       {'form': form, 'Form_Title': 'Applying to org',
                        'form_action': '/org/apply/', 'form_method': 'POST',
                        'user': request.user,
                        'loginable': request.user.is_authenticated()})
     else:
-        form = forms.Org_applicationForm(request.POST)
+        form = forms.OrgApplicationForm(request.POST)
         if form.is_valid():
             nm = models.Member(Organization=form.cleaned_data["Organization"])
             nm.Name = form.cleaned_data['member_name']

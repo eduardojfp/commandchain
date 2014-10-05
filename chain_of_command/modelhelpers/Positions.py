@@ -3,7 +3,7 @@ __author__ = 'awhite'
 from chain_of_command.models import Order, Post, Position
 
 
-def get_orders_for_Position(position, showold=False):
+def get_orders_for_position(position, showold=False):
     """
     Get orders relevant to a position
     :param position: the position in question
@@ -20,7 +20,7 @@ def get_orders_for_Position(position, showold=False):
             if c.Deadline > datetime.now() or showold:
                 orders.append(c)
         i = i.Boss
-        if i.Percolates == False:
+        if not i.Percolates :
             break
     return orders
 

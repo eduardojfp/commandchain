@@ -46,7 +46,7 @@ class OrganizationForm(forms.ModelForm):
         exclude = ['id']
 
 
-class Org_applicationForm(forms.ModelForm):
+class OrgApplicationForm(forms.ModelForm):
     member_name = forms.CharField(80)
 
     class Meta:
