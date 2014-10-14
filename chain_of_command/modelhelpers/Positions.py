@@ -1,7 +1,5 @@
 __author__ = 'awhite'
 
-from chain_of_command.models import Order, Post, Position
-
 
 def get_orders_for_position(position, showold=False):
     """

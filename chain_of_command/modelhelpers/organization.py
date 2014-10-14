@@ -1,6 +1,6 @@
 __author__ = 'awhite'
 
-from chain_of_command.models import Organization, Member, Post
+from chain_of_command.models import Organization
 from django.contrib.auth.models import User
 
 

@@ -11,6 +11,7 @@ class Organization(models.Model):
     """
     Name = models.CharField(max_length=80, unique=True)
     Description = RichTextField()
+    objects = models.Manager()
 
     def __str__(self):
         return self.Name
@@ -24,6 +25,7 @@ class Member(models.Model):
     Organization = models.ForeignKey(Organization)
     User = models.ForeignKey(AUTH_USER_MODEL)
     Provisional = models.BooleanField(default=False)
+    objects = models.Manager()
 
     def __str__(self):
         return self.Name
@@ -43,6 +45,7 @@ class Position(models.Model):
     associated = models.ManyToManyField(Member)
     boss = models.ForeignKey('Position', to_field='id', default=None, null=True,
                              blank=True)
+    objects = models.Manager()
 
     def __str__(self):
         return self.Name
@@ -54,6 +57,7 @@ class Hierarchy(models.Model):
     """
     issuer = models.ForeignKey(Position, related_name="Fi")
     receiver = models.ForeignKey(Member)
+    objects = models.Manager()
 
 
 class Message(models.Model):
@@ -65,6 +69,7 @@ class Message(models.Model):
     Content = models.TextField()
     TS = models.TimeField(auto_now_add=True)
     IsRead = models.BooleanField(default=False)
+    objects = models.Manager()
 
 
 class Post(models.Model):
@@ -76,6 +81,7 @@ class Post(models.Model):
     timestamp = models.TimeField(auto_now=True)
     Content = RichTextField()
     Visible = models.BooleanField(default=True)
+    objects = models.Manager()
 
     class Meta:
         ordering = ['timestamp']
@@ -88,7 +94,7 @@ class Order(models.Model):
     """
     The model associated with orders.
     """
-
+    objects = models.Manager()
     Issuer = models.ForeignKey(Member)
     P = models.ForeignKey(Position, default=0)
     Post = models.ForeignKey(Post)
