@@ -394,6 +394,11 @@ def edit_post(request, post_id):
 
 @login_required()
 def apply_to_org(request):
+    """
+    Renders a form or processes a request to join an organization.
+    :param request: The network request
+    :return: Either a redirect or a form.
+    """
     from django.shortcuts import redirect
 
     if request.method == "GET":

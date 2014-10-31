@@ -15,6 +15,16 @@
             <li>
                 {{ i.Name }} -- <a
                     href="/org/{{ i.Organization_id }}/">{{ i.Organization.Name }}</a>
+                {% if orders %}
+                    These are orders that are pending that are valid for you.
+                    <ul>
+                        {% for i in orders %}
+                            <li>
+                                <a href="/order/{{ i.id }}/view">{{ i.Post.Title }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
                 These are posts you have created as this member.
                 <a href="/post/{{ i.id }}/create">Create a new Post</a>
                 <ul>
