@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from chain_of_command import models, forms
-from django.http import Http404
 from django.contrib.auth.decorators import login_required
+
+from chain_of_command import models, forms
 
 
 def organization_list(request):
@@ -17,42 +17,6 @@ def organization_list(request):
                "loginable": lgnabl, "orgs": latest_org_list}
     return render(request, 'Org_list.html', context)
     # Create your views here.
-
-
-def organization_view(request, org_id):
-    """Render a page showing most of the relevant information about
-    organizations
-    :param request: The network request.
-    :param org_id: The id of the organization.
-    :return A response containing the rendered page."""
-    user = request.user
-    can_see_provisional = False
-    can_delete = False
-    if user.is_authenticated():
-        lgnabl = True
-        mship = models.Member.objects.filter(User_id=user.id,
-                                             Organization_id=org_id)
-        can_see_provisional = len(mship) > 0
-        for valid_membership in mship:
-            for position in valid_membership.position_set.all():
-                print(position.Name)
-                print(position.Organization_id)
-                if position.Name == 'admin':
-                    can_delete = True
-    else:
-        lgnabl = None
-    try:
-        org = models.Organization.objects.get(pk=org_id)
-        # print(dir(org.member_set.all()))
-        mem = org.member_set.order_by('Name')
-        print(dir(mem[0]))
-    except models.Organization.DoesNotExist:
-        raise Http404
-    return render(request, 'org_view.html',
-                  {'Org': org, 'mem': mem,
-                   "loginable": lgnabl,
-                   'canseeprovisional': can_see_provisional,
-                   'candelete': can_delete})
 
 
 def registration_form(request):
@@ -72,113 +36,6 @@ def registration_form(request):
         return render(request, 'generic_form.html',
                       {"form": user_create_form, "form_action": "/register",
                        "form_method": "POST"})
-
-
-@login_required
-def position_display(request, org_id):
-    """
-    Displays the positions in an organization, assuming that the logged in
-    user is a member of said organization
-    :param org_id: The id of the organization in question
-    :param request: The httprequest of the user in general
-    """
-    user = request.user
-    user_id = user.id
-    mem = models.Member.objects.filter(User_id=user_id, Organization_id=org_id)
-    user = object()
-    for i in mem:
-        for j in i.position_set.all():
-            if j.CanEditPrivileges:
-                user = j
-    org = models.Organization.objects.get(pk=org_id)
-    if user.is_authenticated():
-        lgnabl = True
-    else:
-        lgnabl = None
-    if len(mem) > 0:
-        showing = models.Position.objects.filter(Organization_id=org_id)
-        return render(request, 'position_view.html',
-                      {'positions': showing, 'Organization_name': org.Name,
-                       "user": user, "loginable": lgnabl, 'usr': user})
-    else:
-        return "<html><head></head><body>Silly person, you can't read " \
-               "that.</body></html>"
-
-
-@login_required()
-def edit_position(request, org_id, pos_id):
-    """Renders a page and or handles a request to edit positions associated
-    with an organization
-    :param request: The network request.
-    :param org_id: The organization id.
-    :param pos_id: The id of the position in question."""
-    from django.shortcuts import redirect
-
-    form = forms.PositionForm(org_id,
-                              instance=models.Position.objects.get(pk=pos_id))
-    user_id = request.user.id
-    mem = models.Member.objects.filter(User_id=user_id, Organization_id=org_id)
-    canbehere = False
-    for member in mem:
-        for position in member.position_set.all():
-            if position.CanEditPrivileges:
-                canbehere = True
-                break
-        if canbehere:
-            break
-    if canbehere:
-        if request.method == "GET":
-            print(dir(form))
-            return render(request, 'generic_form.html',
-                          {'form': form, 'Form_Title': "Edit position",
-                           "form_action": "",
-                           "form_method": 'POST',
-                           'user': request.user,
-                           'loginable': request.user.is_authenticated()})
-        else:
-            form_object = forms.PositionForm(org_id, request.POST,
-                                             instance=
-                                             models.Position.objects.get(
-                                                 pk=pos_id))
-            if form_object.is_valid():
-                form_object.save()
-    return redirect('/list_org')
-
-
-@login_required()
-def create_position(request, org_id):
-    """Renders a page with a new position form, and handles the creation.
-    :param request: The network request.
-    :param org_id: The organization id."""
-    from django.shortcuts import redirect
-
-    form = forms.PositionForm(org_id)
-    user_id = request.user.id
-    mem = models.Member.objects.filter(User_id=user_id, Organization_id=org_id)
-    canbehere = False
-    for i in mem:
-        for j in i.position_set.all():
-            if j.CanEditPrivileges:
-                canbehere = True
-                break
-        if canbehere:
-            break
-    if canbehere:
-        if request.method == "GET":
-            print(dir(form))
-            return render(request, 'generic_form.html',
-                          {'form': form, 'Form_Title': "Create Position",
-                           "form_action": "",
-                           "form_method": 'POST',
-                           'user': request.user,
-                           'loginable': request.user.is_authenticated()})
-        else:
-            position_form = forms.PositionForm(org_id, request.POST)
-            if position_form.is_valid():
-                position_form.save()
-            return redirect('/org/%s/positions' % org_id)
-    return redirect('/list_org')
-
 
 def user_page(request):
     """
@@ -244,44 +101,6 @@ def login(request):
             return redirect('/login/?next=%s' % request.path)
     else:
         return render(request, 'login.html', {'next': redirect})
-
-
-@login_required()
-def create_organization(request):
-    """
-    Render a form for creating a new organization
-    :param request: A network request.
-    :return: A response to either redirect to the new organization, or the
-    form itself.
-    """
-    from django.shortcuts import redirect
-
-    if request.method == "GET":
-        return render(request, "generic_form.html",
-                      {"user": request.user,
-                       "loginable": request.user.is_authenticated(),
-                       'form': forms.OrganizationForm(),
-                       'form_action': '/org/create/',
-                       'form_method': 'POST'})
-    else:
-        org_form = forms.OrganizationForm(request.POST)
-        if org_form.is_valid():
-            descr = org_form.cleaned_data['Description']
-            oname = org_form.cleaned_data['Name']
-            mname = org_form.cleaned_data['MemberName']
-            org = models.Organization(Name=oname, Description=descr)
-            org.save()
-            pos = models.Position(Name="admin", Organization_id=org.id,
-                                  CanGrantMembership=True, CanIssueOrders=True,
-                                  CanEditOrganization=True,
-                                  CanEditPrivileges=True)
-            pos.save()
-            mem = models.Member(Name=mname, Organization_id=org.id,
-                                User_id=request.user.id)
-            mem.save()
-            pos.associated.add(mem)
-            pos.save()
-            return redirect('/org/%d/' % org.id)
 
 
 @login_required
@@ -391,59 +210,3 @@ def edit_post(request, post_id):
                 post.save()
             return redirect('/post/%s/view' % str(post.id))
 
-
-@login_required()
-def apply_to_org(request):
-    """
-    Renders a form or processes a request to join an organization.
-    :param request: The network request
-    :return: Either a redirect or a form.
-    """
-    from django.shortcuts import redirect
-
-    if request.method == "GET":
-        org_id = request.GET['org_id']
-        form = forms.OrgApplicationForm()
-        return render(request, 'generic_form.html',
-                      {'form': form, 'Form_Title': 'Applying to org',
-                       'form_action': '/org/apply/', 'form_method': 'POST',
-                       'user': request.user,
-                       'loginable': request.user.is_authenticated()})
-    else:
-        form = forms.OrgApplicationForm(request.POST)
-        if form.is_valid():
-            new_member = models.Member(
-                Organization=form.cleaned_data["Organization"])
-            new_member.Name = form.cleaned_data['member_name']
-            new_member.User_id = request.user.id
-            new_member.Provisional = True
-            new_member.save()
-            return redirect("/user")
-
-
-@login_required()
-def delete_org(request, org_id):
-    from django.shortcuts import redirect
-
-    user = request.user
-    can_delete = False
-    if user.is_authenticated():
-        mship = models.Member.objects.filter(User_id=user.id,
-                                             Organization_id=org_id)
-        for member in mship:
-            for position in member.position_set.all():
-                print(position.Name)
-                print(position.Organization_id)
-                if position.Name == 'admin':
-                    can_delete = True
-    if can_delete:
-        models.Organization.objects.get(pk=org_id).delete()
-        return redirect('/list_org')
-    else:
-        return render(request, 'Error.html', {'error_summary': 'Invalid access',
-                                              'error_details': 'You must be '
-                                                               'the '
-                                                               'administrator '
-                                                               'of the '
-                                                               'organization '
-                                                               'to delete it'})
