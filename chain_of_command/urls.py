@@ -17,5 +17,5 @@ org_patterns = patterns('',
                             create_position),
                         url(r'^(?P<org_id>\d+)/delete', delete_org),
                         url(r'^create/', create_organization),
-                        url(r'^apply/', apply_to_org)
+                        url(r'^apply/', apply_to_org),
 )

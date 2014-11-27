@@ -37,6 +37,7 @@ def registration_form(request):
                       {"form": user_create_form, "form_action": "/register",
                        "form_method": "POST"})
 
+
 def user_page(request):
     """
     Render a user control page.
@@ -70,7 +71,7 @@ def login(request):
     :return: A response that is either a redirect to the user control panel
     or the page the user was previously on."""
     from django.contrib.auth import authenticate, login
-    from django.shortcuts import redirect
+    from django.shortcuts import redirect as redir
 
     if request.GET is not None and 'next' in request.GET:
         if request.GET['next'] is not None:
@@ -94,7 +95,7 @@ def login(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                return redirect(redirect)
+                return redir(redirect)
             else:
                 return redirect('/login/')
         else:
@@ -210,3 +211,20 @@ def edit_post(request, post_id):
                 post.save()
             return redirect('/post/%s/view' % str(post.id))
 
+
+@login_required()
+def list_orders(request):
+    q = request.user.member_set.all()
+    plist = []
+    olist = []
+    for i in q:
+        for x in models.Position.objects.filter(associated=i):
+            plist.append(x)
+            print(dir(x))
+            for z in x.order_set.all():
+                olist.append(z)
+
+    return render(request ,"order_list.html", {'user': request.user,
+                                    'loginable': request.user.is_authenticated(),
+                                    "plist": plist,
+                                    'olist': olist})

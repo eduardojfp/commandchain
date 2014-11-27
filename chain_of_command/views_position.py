@@ -1,5 +1,8 @@
 from chain_of_command import forms, models
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
+from chain_of_command import models, forms
 __author__ = 'awhite'
 
 
